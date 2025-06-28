@@ -1,0 +1,49 @@
+{% load dict_extras %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CRM</title>
+</head>
+<body>
+    <h1>Clientes</h1>
+
+    <form method="get">
+        <input type="text" name="name" placeholder="Buscar por nombre">
+        <select name="birthday">
+            <option value="">-- Filtrar cumpleaños --</option>
+            <option value="this_week">Esta semana</option>
+        </select>
+        <button type="submit">Filtrar</button>
+    </form>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Compañía</th>
+                <th>Cumpleaños</th>
+                <th>Última Interacción</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for c in customers %}
+            <tr>
+                <td>{{ c.name }}</td>
+                <td>{{ c.company.name }}</td>
+                <td>{{ c.birthday|date:"F j" }}</td>
+                <td>
+                    {% with last=latest_interactions|get_item:c.id %}
+                        {% if last %}
+                            {{ last.latest|timesince }} ago ({{ last.interaction_type }})
+                        {% else %}
+                            Sin interacción
+                        {% endif %}
+                    {% endwith %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
